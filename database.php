@@ -3,9 +3,9 @@
 
 	$database = new medoo([
 	    'database_type' => 'mysql',
-	    'database_name' => 'jolicut',
+	    'database_name' => /*NAME*/,
 	    'server' => 'localhost',
 	    'username' => 'root',
-	    'password' => 'CCiosgrtards',
+	    'password' => /*PASSWD*/,
 	    'charset' => 'utf8'
 	]);
