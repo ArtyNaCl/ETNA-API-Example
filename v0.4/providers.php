@@ -24,8 +24,8 @@
 	$app->get('/providers/{id}', function ($id) use ($app, $database) {
 			$data = $database->select("providers", "*", ['id' => $id]);
 			$ddbAge = $data[0]['age'];
-			$ddbAge = explode("-", $ddbAge);
-			$data[0]['age'] = strval((date("md", date("U", mktime(0, 0, 0, $ddbAge[1], $ddbAge[2], $ddbAge[0]))) > date("md") ? ((date("Y") - $ddbAge[0]) - 1) : (date("Y") - $ddbAge[0])));
+			$ddbAge = explode("/", $ddbAge); //A M J => J M A
+			$data[0]['age'] = strval((date("md", date("U", mktime(0, 0, 0, $ddbAge[0], $ddbAge[1], $ddbAge[2]))) > date("md") ? ((date("Y") - $ddbAge[2]) - 1) : (date("Y") - $ddbAge[2]))); // 1 <=> 0
 		    return $app->json($data, 200);
 		});
 
@@ -57,6 +57,13 @@
 	});
 
 	$app->put('/providers/{id}', function (Request $request) use ($app, $database) {
+		if ($request->get('state'))
+			return $app->json($database->update('providers', ['state' => $request->get('state')], ['id' => $request->get('id')]), 200);
+		else if ($request->get('posLon') && $request->get('posLat'))
+		{
+			$neoPos = array('posLat' => $request->get('posLat'), 'posLon' => $request->get('posLon'));
+			return $app->json($database->update('providers', $neoPos, ['id' => $request->get('id')]), 200);
+		}
 		$data = array(
 			'email' => $request->get('email'),
 			'phoneNumber' => $request->get('phoneNumber'),
